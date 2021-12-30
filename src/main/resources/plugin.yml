@@ -1,0 +1,17 @@
+name: PRTP
+version: '${project.version}'
+main: xyz.distemi.prtp.PRTP
+api-version: 1.12
+depend: [ Vault, PlaceholderAPI, DeluxeMenus ]
+authors: [ Distemi ]
+description: RTP by profiles
+prefix: "§dPrototype RTP§f"
+commands:
+  prtp:
+    aliases:
+      - rtp
+    description: "§aРандомная телепортация"
+    usage: "§a/<command> <профиль>"
+permissions:
+  prtp.reload:
+    default: op

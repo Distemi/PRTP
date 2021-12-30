@@ -1,0 +1,52 @@
+# Plugin messages
+messages:
+  # If player don't had permissions for profile or reload plugin
+  noPerm: "&fSorry, you're don't has permission for this action."
+  # Success teleportation message
+  teleported: "&fYoy are teleported to X: #X Y: #Y Z: #Z."
+  # Сообщение когда в мире мало игроков
+  worldNoPlayers: "&fSorry, teleportation don't can be executed when player's not found."
+  # Message when profile not found
+  noProfile: "&cTeleportation profile not found!"
+  # Costs messages
+  costs:
+    # If player don't had food cost to teleportation
+    noFood: "&cSorry, you're don't has $Val food to teleportation."
+    # If player don't had economy cost to teleportation
+    noEco: "&cSorry, you're don't has $Val dollars to teleportation."
+    # If player don't had health cost to teleportation
+    noHealth: "&cSorry, you're don't has $Val health to teleportation."
+# Main settings
+settings:
+  # On Default executing(without args) - /prtp
+  # player:<command> - execute a command from player's name
+  # console:<command> - execute a command from console's name
+  # message:<message> - tell message to player
+  # ...or a profile name
+  default-command: random
+  # Blocks ignored when calculating the ordinate axis Y
+  ignored-blocks:
+    - AIR
+# Teleportation profiles
+profiles:
+  - name: 'random'
+    # Random radius
+    # If radius, when plugin calculate random number for X and Z in -1000 and 1000
+    radius: '1000'
+    # Target world
+    world: 'world'
+    # Target to teleport center. Types:
+    # center - world center(X: 0; Z: 0)
+    # player - random player in world(if not find - messages.worldnoplayers)
+    target: 'center'
+    # Teleportation cost. Types:
+    # food:<food> - food cost(as default player has 20 food)
+    # eco:<money> - economy cost, Vault required.
+    # health:<health> - health cost(as default player has 20 health)
+    # none - disable cost for this profile
+    cost: food:1
+  - name: 'player'
+    radius: '100'
+    world: 'world'
+    regarding: 'player'
+    cost: none
