@@ -1,7 +1,6 @@
 name: PRTP
 version: '${project.version}'
 main: xyz.distemi.prtp.PRTP
-api-version: 1.12
 depend:
   - Vault
 softdepend:
