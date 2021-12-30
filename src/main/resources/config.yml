@@ -11,11 +11,11 @@ messages:
   # Costs messages
   costs:
     # If player don't had food cost to teleportation
-    noFood: "&cSorry, you're don't has $Val food to teleportation."
+    noFood: "&cSorry, you're don't has #Val food to teleportation."
     # If player don't had economy cost to teleportation
-    noEco: "&cSorry, you're don't has $Val dollars to teleportation."
+    noEco: "&cSorry, you're don't has #Val dollars to teleportation."
     # If player don't had health cost to teleportation
-    noHealth: "&cSorry, you're don't has $Val health to teleportation."
+    noHealth: "&cSorry, you're don't has #Val health to teleportation."
 # Main settings
 settings:
   # On Default executing(without args) - /prtp
@@ -44,9 +44,9 @@ profiles:
     # eco:<money> - economy cost, Vault required.
     # health:<health> - health cost(as default player has 20 health)
     # none - disable cost for this profile
-    cost: food:1
+    cost: "food:1"
   - name: 'player'
     radius: '100'
     world: 'world'
-    regarding: 'player'
-    cost: none
+    target: 'player'
+    cost: "none"

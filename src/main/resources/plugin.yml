@@ -2,10 +2,13 @@ name: PRTP
 version: '${project.version}'
 main: xyz.distemi.prtp.PRTP
 api-version: 1.12
-depend: [ Vault, PlaceholderAPI, DeluxeMenus ]
+depend:
+  - Vault
+softdepend:
+  - PlaceholderAPI
 authors: [ Distemi ]
 description: RTP by profiles
-prefix: "§dPrototype RTP§f"
+prefix: "Prototype RTP"
 commands:
   prtp:
     aliases:

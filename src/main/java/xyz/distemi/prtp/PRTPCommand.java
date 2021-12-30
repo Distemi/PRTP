@@ -37,6 +37,7 @@ public class PRTPCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
         }
+
         if (!PRTP.profiles.containsKey(execute)) {
             sender.sendMessage(Messages.noProfile);
             return true;

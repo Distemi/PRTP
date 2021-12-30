@@ -28,9 +28,10 @@ public class RoseCost {
         }
 
         if (cost.startsWith("food:")) {
-            int food = Integer.parseUnsignedInt(cost.substring(6));
-            if (player.getFoodLevel() >= food) {
-                if (notify) player.sendMessage(PUtils.a(Messages.costsNoFood, player));
+            int food = Integer.parseUnsignedInt(cost.split(":")[1]);
+            if (player.getFoodLevel() <= food) {
+                if (notify) player.sendMessage(PUtils.a(
+                        Messages.costsNoFood.replaceAll("#Val", String.valueOf(food)), player));
                 return false;
             }
             if (take) {
@@ -40,9 +41,10 @@ public class RoseCost {
         }
 
         if (cost.startsWith("eco:")) {
-            int eco = Integer.parseUnsignedInt(cost.substring(5));
+            int eco = Integer.parseUnsignedInt(cost.split(":")[1]);
             if (!economy.has(player, eco)) {
-                if (notify) player.sendMessage(PUtils.a(Messages.costsNoEco, player));
+                if (notify) player.sendMessage(PUtils.a(
+                        Messages.costsNoEco.replaceAll("#Val", String.valueOf(eco)), player));
                 return false;
             }
             if (take) {
@@ -52,9 +54,10 @@ public class RoseCost {
         }
 
         if (cost.startsWith("health:")) {
-            int health = Integer.parseUnsignedInt(cost.substring(8));
+            int health = Integer.parseUnsignedInt(cost.split(":")[1]);
             if (player.getHealth() - health <= 1) {
-                if (notify) player.sendMessage(PUtils.a(Messages.costsNoHealth, player));
+                if (notify) player.sendMessage(PUtils.a(
+                        Messages.costsNoHealth.replaceAll("#Val", String.valueOf(health)), player));
                 return false;
             }
             if (take) {

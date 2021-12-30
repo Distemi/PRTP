@@ -1,5 +1,6 @@
 package xyz.distemi.prtp;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,13 +28,13 @@ public final class PRTP extends JavaPlugin {
         ConfigurationSection mess_section = cfg.getConfigurationSection("messages");
 
         Messages.noPerm = PUtils.b(mess_section.getString("noPerm", "&fSorry, you're don't has permission for this action&8(&7$Perm&8)."));
-        Messages.teleported = PUtils.b(mess_section.getString("teleported", "&fYoy are teleported to X: $X Y: $Y Z: $Z."));
+        Messages.teleported = PUtils.b(mess_section.getString("teleported", "&fYoy are teleported to X: #X Y: #Y Z: #Z."));
         Messages.worldNoPlayers = PUtils.b(mess_section.getString("worldNoPlayers", "&fSorry, teleportation don't can be executed when player's not found."));
         Messages.noProfile = PUtils.b(mess_section.getString("noProfile", "&cTeleportation profile not found!"));
 
-        Messages.costsNoFood = PUtils.b(mess_section.getString("costs.noFood", "&cSorry, you're don't has $Val food to teleportation."));
-        Messages.costsNoEco = PUtils.b(mess_section.getString("costs.noEco", "&cSorry, you're don't has $Val dollars to teleportation."));
-        Messages.costsNoHealth = PUtils.b(mess_section.getString("costs.noHealth", "&cSorry, you're don't has $Val health to teleportation."));
+        Messages.costsNoFood = PUtils.b(mess_section.getString("costs.noFood", "&cSorry, you're don't has #Val food to teleportation."));
+        Messages.costsNoEco = PUtils.b(mess_section.getString("costs.noEco", "&cSorry, you're don't has #Val dollars to teleportation."));
+        Messages.costsNoHealth = PUtils.b(mess_section.getString("costs.noHealth", "&cSorry, you're don't has #Val health to teleportation."));
 
 
         ConfigurationSection sett_section = cfg.getConfigurationSection("settings");
@@ -44,7 +45,7 @@ public final class PRTP extends JavaPlugin {
         profiles.clear();
         for (Map<?, ?> val : cfg.getMapList("profiles")) {
             if (val.containsKey("name") && val.containsKey("radius")
-                    && val.containsKey("world") && val.containsKey("regarding")
+                    && val.containsKey("world") && val.containsKey("target")
             ) {
                 String cost = (String) val.get("cost");
                 if (Objects.requireNonNull(cost).length() <= 2 || !val.containsKey("cost")) {
@@ -54,10 +55,10 @@ public final class PRTP extends JavaPlugin {
                 profile.name = (String) val.get("name");
                 profile.radius = Integer.parseInt((String) val.get("radius"));
                 profile.world = (String) val.get("world");
-                profile.target = (String) val.get("regarding");
+                profile.target = (String) val.get("target");
                 profile.cost = cost;
                 profiles.put(profile.name, profile);
-                logger.fine(String.format("Зарегестрирован профиль телепортации %s", profile.name));
+                logger.info(String.format("%sRegistered profile %s", ChatColor.GREEN, profile.name));
             }
         }
     }
@@ -67,7 +68,7 @@ public final class PRTP extends JavaPlugin {
         logger = getLogger();
         THIS = this;
 
-        logger.fine("Initializing Prototype RTP...");
+        logger.info("Initializing Prototype RTP...");
 
         try {
             saveDefaultConfig();
@@ -87,7 +88,7 @@ public final class PRTP extends JavaPlugin {
             return;
         }
 
-        logger.fine("Initialized successful!");
+        logger.info("Initialized successful!");
     }
 
     @Override
