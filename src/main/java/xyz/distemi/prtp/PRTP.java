@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public final class PRTP extends JavaPlugin {
     public static HashMap<String, Profile> profiles = new HashMap<>();
@@ -31,16 +32,19 @@ public final class PRTP extends JavaPlugin {
         Messages.teleported = PUtils.b(mess_section.getString("teleported", "&fYoy are teleported to X: #X Y: #Y Z: #Z."));
         Messages.worldNoPlayers = PUtils.b(mess_section.getString("worldNoPlayers", "&fSorry, teleportation don't can be executed when player's not found."));
         Messages.noProfile = PUtils.b(mess_section.getString("noProfile", "&cTeleportation profile not found!"));
+        Messages.failedToFindAPlace = PUtils.b(mess_section.getString("failedToFindAPlace", "&cCouldn't find a suitable location, try again..."));
 
         Messages.costsNoFood = PUtils.b(mess_section.getString("costs.noFood", "&cSorry, you're don't has #Val food to teleportation."));
         Messages.costsNoEco = PUtils.b(mess_section.getString("costs.noEco", "&cSorry, you're don't has #Val dollars to teleportation."));
         Messages.costsNoHealth = PUtils.b(mess_section.getString("costs.noHealth", "&cSorry, you're don't has #Val health to teleportation."));
 
+        Messages.configReloaded = PUtils.b(mess_section.getString("config.configReloaded", "&aConfig reloaded!"));
 
         ConfigurationSection sett_section = cfg.getConfigurationSection("settings");
         Settings.defaultCommand = sett_section.getString("default-command", "random");
-        Settings.ignoredBlocks = sett_section.getStringList("ignored-blocks");
-
+        Settings.ignoredBlocks = sett_section.getStringList("ignored-blocks").stream().map(String::toUpperCase).collect(Collectors.toList());
+        Settings.preventBlocks = sett_section.getStringList("prevent-blocks").stream().map(String::toUpperCase).collect(Collectors.toList());
+        Settings.maxTries = sett_section.getInt("max-tries", 8);
 
         profiles.clear();
         for (Map<?, ?> val : cfg.getMapList("profiles")) {
@@ -75,7 +79,7 @@ public final class PRTP extends JavaPlugin {
             parseConfig();
 
             if (!RoseCost.setEconomy()) {
-                throw new Exception("Failed initialize economy from Vault");
+                logger.severe("Failed initialize economy from Vault");
             }
 
             PluginCommand command = getCommand("prtp");

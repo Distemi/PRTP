@@ -6,7 +6,11 @@ public class Messages {
     public static String worldNoPlayers;
     public static String noProfile;
 
+    public static String failedToFindAPlace;
+
     public static String costsNoFood;
     public static String costsNoEco;
     public static String costsNoHealth;
+
+    public static String configReloaded;
 }

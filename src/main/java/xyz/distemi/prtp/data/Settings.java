@@ -5,4 +5,7 @@ import java.util.List;
 public class Settings {
     public static String defaultCommand;
     public static List<String> ignoredBlocks;
+    public static List<String> preventBlocks;
+
+    public static int maxTries;
 }

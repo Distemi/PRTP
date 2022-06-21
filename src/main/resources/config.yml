@@ -3,11 +3,14 @@ messages:
   # If player don't had permissions for profile or reload plugin
   noPerm: "&fSorry, you're don't has permission for this action."
   # Success teleportation message
-  teleported: "&fYoy are teleported to X: #X Y: #Y Z: #Z."
-  # Сообщение когда в мире мало игроков
+  teleported: "&fYou are teleported to X: #X Y: #Y Z: #Z."
+  # The message when there are few players in the world
   worldNoPlayers: "&fSorry, teleportation don't can be executed when player's not found."
   # Message when profile not found
   noProfile: "&cTeleportation profile not found!"
+  # The message when it was not possible to find a suitable
+  # place with the conditions from the settings section
+  failedToFindAPlace: "&cCouldn't find a suitable location, try again..."
   # Costs messages
   costs:
     # If player don't had food cost to teleportation
@@ -16,6 +19,10 @@ messages:
     noEco: "&cSorry, you're don't has #Val dollars to teleportation."
     # If player don't had health cost to teleportation
     noHealth: "&cSorry, you're don't has #Val health to teleportation."
+  # Configuration messages
+  config:
+    # /prtp reload - result when ok
+    configReloaded: "&aConfig reloaded!"
 # Main settings
 settings:
   # On Default executing(without args) - /prtp
@@ -27,8 +34,19 @@ settings:
   # Blocks ignored when calculating the ordinate axis Y
   ignored-blocks:
     - AIR
+  # Blocks that cancel teleportation in a specific location
+  prevent-blocks:
+    - WATER
+    - STATIONARY_WATER
+    - LAVA
+    - STATIONARY_LAVA
+  # The plugin is looking for a suitable place,
+  # but it happens that it does not meet the conditions,
+  # how many times will there be maximum attempts?
+  max-tries: 8
 # Teleportation profiles
 profiles:
+
   - name: 'random'
     # Random radius
     # If radius, when plugin calculate random number for X and Z in -1000 and 1000
@@ -41,10 +59,11 @@ profiles:
     target: 'center'
     # Teleportation cost. Types:
     # food:<food> - food cost(as default player has 20 food)
-    # eco:<money> - economy cost, Vault required.
-    # health:<health> - health cost(as default player has 20 health)
+    # eco:<money> - economy cost, Vault and Economy plugin ( for example XConomy ) required.
+    # health:<health> - health cost(as default player has 20 health, every heart = 2 health)
     # none - disable cost for this profile
     cost: "food:1"
+
   - name: 'player'
     radius: '100'
     world: 'world'

@@ -1,9 +1,8 @@
 name: PRTP
-version: '${project.version}'
+version: "${version}"
 main: xyz.distemi.prtp.PRTP
-depend:
-  - Vault
 softdepend:
+  - Vault
   - PlaceholderAPI
 authors: [ Distemi ]
 description: RTP by profiles
@@ -12,8 +11,8 @@ commands:
   prtp:
     aliases:
       - rtp
-    description: "§aРандомная телепортация"
-    usage: "§a/<command> <профиль>"
+    description: "§aRandom teleport"
+    usage: "§a/<command> <profile>"
 permissions:
   prtp.reload:
     default: op
