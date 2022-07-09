@@ -1,27 +1,31 @@
 package xyz.distemi.prtp;
 
-import org.bukkit.*;
-import org.bukkit.block.Block;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import xyz.distemi.prtp.api.PRTPAPI;
 import xyz.distemi.prtp.data.Messages;
-import xyz.distemi.prtp.data.Profile;
 import xyz.distemi.prtp.data.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class PRTPCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String @NotNull [] args) {
         PUtils.uasy(() -> {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(ChatColor.RED + "Players only!");
+                return;
+            }
+
             String execute = Settings.defaultCommand;
+
             if (args.length > 0) {
                 execute = args[0];
                 if (execute.equalsIgnoreCase("reload") && sender.hasPermission("prtp.reload")) {
@@ -36,14 +40,19 @@ public class PRTPCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
+            try {
+                PRTPAPI.rtpPlayer(((Player) sender), execute);
+            } catch (Exception exception) {
+                sender.sendMessage(exception.getMessage());
+            }
+
+            /*String execute = Settings.defaultCommand;
+
             if (!PRTP.profiles.containsKey(execute)) {
                 sender.sendMessage(Messages.noProfile);
                 return;
             }
-            if (!(sender instanceof Player)) {
-                sender.sendMessage(ChatColor.RED + "Players only!");
-                return;
-            }
+
             Player player = (Player) sender;
 
             if (execute.startsWith("player:")) {
@@ -120,27 +129,10 @@ public class PRTPCommand implements CommandExecutor, TabCompleter {
                     }
                 }
                 iter++;
-            }
+            }*/
 
         });
         return true;
-    }
-
-    private int calcY(World world, int x, int z) {
-        PUtils.usysaw(() -> world.getBlockAt(x, 10, z));
-        for (int y = 255; y > 0; y--) {
-            Block block = world.getBlockAt(x, y, z);
-            Material material = block.getType();
-            String mat_name = material.name();
-            if (Settings.preventBlocks.contains(mat_name)) {
-                return -1;
-            }
-            if (material.isTransparent() || Settings.ignoredBlocks.contains(mat_name)) {
-                continue;
-            }
-            return block.getY() + 1;
-        }
-        return 115;
     }
 
     @Override

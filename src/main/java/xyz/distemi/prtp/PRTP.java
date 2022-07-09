@@ -25,7 +25,6 @@ public final class PRTP extends JavaPlugin {
     public void parseConfig() {
         FileConfiguration cfg = getConfig();
 
-
         ConfigurationSection mess_section = cfg.getConfigurationSection("messages");
 
         Messages.noPerm = PUtils.b(mess_section.getString("noPerm", "&fSorry, you're don't has permission for this action&8(&7$Perm&8)."));
