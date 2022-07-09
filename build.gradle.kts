@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains:annotations:20.1.0")
+    implementation("org.jetbrains:annotations:23.0.0")
     compileOnly("com.destroystokyo.paper:paper-api:1.12.2-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
@@ -45,7 +45,7 @@ tasks.processResources {
 }
 
 group = "xyz.distemi.prtp"
-version = "1.1"
+version = "1.2"
 description = "PRTP"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
