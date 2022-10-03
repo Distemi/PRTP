@@ -8,4 +8,5 @@ public class Settings {
     public static List<String> preventBlocks;
 
     public static int maxTries;
+    public static boolean calculateSync;
 }

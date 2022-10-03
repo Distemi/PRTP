@@ -13,6 +13,9 @@ commands:
       - rtp
     description: "§aRandom teleport"
     usage: "§a/<command> <profile>"
+    permission: prtp.use
 permissions:
+  prtp.use:
+    default: true
   prtp.reload:
     default: op

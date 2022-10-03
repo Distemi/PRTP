@@ -7,10 +7,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import xyz.distemi.prtp.data.Messages;
 
+// Some lib (what...)
 public class RoseCost {
     private static Economy economy;
 
-    public static boolean setEconomy() {
+    public static boolean setupEconomy() {
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
             return false;
         }

@@ -23,6 +23,8 @@ messages:
   config:
     # /prtp reload - result when ok
     configReloaded: "&aConfig reloaded!"
+  command:
+    noPermission: "&cYou don't have permission to use this command."
 # Main settings
 settings:
   # On Default executing(without args) - /prtp
@@ -44,6 +46,11 @@ settings:
   # but it happens that it does not meet the conditions,
   # how many times will there be maximum attempts?
   max-tries: 8
+  # Calculation Settings
+  calculating:
+    # After each attempt, the desired chunk is loaded - is it loaded synchronously?
+    # Recommended for versions like 1.12.2.
+    sync-preload: true
 # Teleportation profiles
 profiles:
 
@@ -63,6 +70,10 @@ profiles:
     # health:<health> - health cost(as default player has 20 health, every heart = 2 health)
     # none - disable cost for this profile
     cost: "food:1"
+    # Animation, but so far the plugin has only 1 animation
+    # fall:<max height>,<ticks to prevent damage> - when the player teleports, he falls.
+    # Recommended calculation of ticks: N(blocks of height) * 1.05(seconds) * 20(1 second * 20 ticks)
+    animation: "fall:2,60"
 
   - name: 'player'
     radius: '100'

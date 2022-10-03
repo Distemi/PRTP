@@ -5,6 +5,7 @@
 plugins {
     java
     `maven-publish`
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 repositories {
@@ -36,7 +37,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains:annotations:23.0.0")
     compileOnly("com.destroystokyo.paper:paper-api:1.12.2-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.1")
+    compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 }
 
@@ -45,7 +46,7 @@ tasks.processResources {
 }
 
 group = "xyz.distemi.prtp"
-version = "1.2"
+version = "1.3"
 description = "PRTP"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
@@ -62,8 +63,20 @@ tasks.withType<JavaCompile>() {
 tasks.register("copy_to_1_12_2_test_env") {
     doLast {
         copy {
-            from("./build/libs/PRTP-1.1.jar")
+            from("./build/libs/PRTP-1.3.jar")
             into("../test-server1.12.2/plugins/")
         }
     }
+}
+tasks.register("copy_to_1_19_2_test_env") {
+    doLast {
+        copy {
+            from("./build/libs/PRTP-1.3.jar")
+            into("../test-server1.19.2/plugins/")
+        }
+    }
+}
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>() {
+    minimize()
+    exclude("META-INF")
 }

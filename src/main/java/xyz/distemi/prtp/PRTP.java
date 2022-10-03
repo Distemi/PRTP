@@ -8,6 +8,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.distemi.prtp.data.Messages;
 import xyz.distemi.prtp.data.Profile;
 import xyz.distemi.prtp.data.Settings;
+import xyz.distemi.prtp.data.antimations.EmptyAnimation;
+import xyz.distemi.prtp.data.antimations.FallAnimation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,23 +47,42 @@ public final class PRTP extends JavaPlugin {
         Settings.preventBlocks = sett_section.getStringList("prevent-blocks").stream().map(String::toUpperCase).collect(Collectors.toList());
         Settings.maxTries = sett_section.getInt("max-tries", 8);
 
+        Settings.calculateSync = sett_section.getBoolean("calculating.sync-preload");
+
         profiles.clear();
         for (Map<?, ?> val : cfg.getMapList("profiles")) {
             if (val.containsKey("name") && val.containsKey("radius")
                     && val.containsKey("world") && val.containsKey("target")
             ) {
-                String cost = (String) val.get("cost");
-                if (Objects.requireNonNull(cost).length() <= 2 || !val.containsKey("cost")) {
-                    cost = "none";
+                try {
+                    String cost = (String) val.get("cost");
+                    if (Objects.requireNonNull(cost).length() <= 2 || !val.containsKey("cost")) {
+                        cost = "none";
+                    }
+                    Profile profile = new Profile();
+                    profile.name = (String) val.get("name");
+                    profile.radius = Integer.parseInt((String) val.get("radius"));
+                    profile.world = (String) val.get("world");
+                    profile.target = (String) val.get("target");
+                    profile.cost = cost;
+                    {
+                        String animation = val.containsKey("animation") ? (String) val.get("animation") : "";
+                        String[] parts = animation.split(":", 2);
+                        if (parts.length == 2) {
+                            if ("fall".equals(parts[0])) {
+                                profile.animation = new FallAnimation();
+                                profile.animation.parse(parts[1]);
+                            }
+                        } else {
+                            profile.animation = new EmptyAnimation();
+                        }
+                    }
+                    profiles.put(profile.name, profile);
+                    logger.info(String.format("%sRegistered profile %s", ChatColor.GREEN, profile.name));
+                } catch (Exception e) {
+                    logger.warning(String.format("%sFailed to register profile %s", ChatColor.RED, val.get("name")));
+                    e.printStackTrace();
                 }
-                Profile profile = new Profile();
-                profile.name = (String) val.get("name");
-                profile.radius = Integer.parseInt((String) val.get("radius"));
-                profile.world = (String) val.get("world");
-                profile.target = (String) val.get("target");
-                profile.cost = cost;
-                profiles.put(profile.name, profile);
-                logger.info(String.format("%sRegistered profile %s", ChatColor.GREEN, profile.name));
             }
         }
     }
@@ -77,12 +98,13 @@ public final class PRTP extends JavaPlugin {
             saveDefaultConfig();
             parseConfig();
 
-            if (!RoseCost.setEconomy()) {
+            if (!RoseCost.setupEconomy()) {
                 logger.severe("Failed initialize economy from Vault");
             }
 
             PluginCommand command = getCommand("prtp");
             PRTPCommand prtpCommand = new PRTPCommand();
+            command.setPermissionMessage(PUtils.b(getConfig().getString("messages.command.noPermission", "&cYou don't have permission to use this command.")));
             command.setExecutor(prtpCommand);
             command.setTabCompleter(prtpCommand);
         } catch (Exception exception) {

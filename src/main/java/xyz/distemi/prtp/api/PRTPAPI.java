@@ -2,9 +2,7 @@ package xyz.distemi.prtp.api;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import xyz.distemi.prtp.PRTP;
 import xyz.distemi.prtp.PUtils;
@@ -77,7 +75,7 @@ public class PRTPAPI {
                 world = location.getWorld();
             }
 
-            int y = calcY(world, x, z);
+            int y = PUtils.calcY(world, x, z);
             if (y != -1) {
                 if (RoseCost.doCost(profile.cost, player, true, false)) {
                     player.sendMessage(PUtils.a(
@@ -86,7 +84,7 @@ public class PRTPAPI {
                                     .replaceAll("#Y", String.valueOf(y))
                                     .replaceAll("#Z", String.valueOf(z))
                             , player));
-                    PUtils.usys(() -> player.teleport(new Location(
+                    Bukkit.getScheduler().runTask(PRTP.THIS, () -> profile.animation.process(player, new Location(
                             world,
                             x,
                             y,
@@ -103,20 +101,4 @@ public class PRTPAPI {
         return PRTP.profiles.values();
     }
 
-    private static int calcY(World world, int x, int z) {
-        PUtils.usysaw(() -> world.getBlockAt(x, 10, z));
-        for (int y = 255; y > 0; y--) {
-            Block block = world.getBlockAt(x, y, z);
-            Material material = block.getType();
-            String mat_name = material.name();
-            if (Settings.preventBlocks.contains(mat_name)) {
-                return -1;
-            }
-            if (material.isTransparent() || Settings.ignoredBlocks.contains(mat_name)) {
-                continue;
-            }
-            return block.getY() + 1;
-        }
-        return -1;
-    }
 }

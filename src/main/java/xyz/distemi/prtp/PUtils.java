@@ -3,14 +3,19 @@ package xyz.distemi.prtp;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
+import xyz.distemi.prtp.data.Settings;
 
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class PUtils {
-    private static final BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
 
     public static String a(@NotNull String text, Player player) {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -27,21 +32,39 @@ public class PUtils {
         return ThreadLocalRandom.current().nextInt(mi, ma);
     }
 
-    public static int usys(Runnable a) {
-        return bukkitScheduler.runTask(PRTP.THIS, a).getTaskId();
-    }
-
-    public static void uasy(Runnable a) {
-        bukkitScheduler.runTaskAsynchronously(PRTP.THIS, a);
-    }
-
-    public static void usysaw(Runnable a) {
-        int t = usys(a);
-        while (bukkitScheduler.isQueued(t) || bukkitScheduler.isCurrentlyRunning(t)) {
+    public static int calcY(World world, int x, int z) throws Exception {
+        BukkitScheduler scheduler = Bukkit.getScheduler();
+        AtomicReference<Chunk> chunk = new AtomicReference<>(null);
+        if (Settings.calculateSync) {
+            scheduler.runTask(PRTP.THIS, () -> chunk.set(world.getChunkAt(x, z)));
+        } else {
+            world.getChunkAtAsync(x, z, chunk::set);
+        }
+        while (chunk.get() == null) {
             try {
                 Thread.sleep(1);
             } catch (Exception ignored) {
             }
         }
+        Chunk sameChunk = chunk.get();
+        int xOffset = x - sameChunk.getX();
+        int zOffset = z - sameChunk.getZ();
+
+        for (int y = 255; y > 0; y--) {
+            try {
+                Block block = sameChunk.getBlock(xOffset, y, zOffset);
+                Material material = block.getType();
+                String mat_name = material.name();
+                if (Settings.preventBlocks.contains(mat_name)) {
+                    return -1;
+                }
+                if (material.isTransparent() || Settings.ignoredBlocks.contains(mat_name)) {
+                    continue;
+                }
+                return block.getY() + 1;
+            } catch (Exception ignored) {
+            }
+        }
+        return -1;
     }
 }
