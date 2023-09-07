@@ -3,7 +3,7 @@ messages:
   # If player don't had permissions for profile or reload plugin
   noPerm: "&fSorry, you're don't has permission for this action."
   # Success teleportation message
-  teleported: "&fYou are teleported to X: #X Y: #Y Z: #Z."
+  teleported: "&fYou are teleported to X: #X Y: #Y Z: #Z. Using #Tms."
   # The message when there are few players in the world
   worldNoPlayers: "&fSorry, teleportation don't can be executed when player's not found."
   # Message when profile not found
@@ -33,6 +33,11 @@ settings:
   # message:<message> - tell message to player
   # ...or a profile name
   default-command: random
+  # The plugin will look for a suitable place for teleportation
+  # Available calculators:
+  # core - default calculator from server's core
+  # plugin - plugin's calculator (support special parameters)
+  y-calculator: core
   # Blocks ignored when calculating the ordinate axis Y
   ignored-blocks:
     - AIR
@@ -45,7 +50,7 @@ settings:
   # The plugin is looking for a suitable place,
   # but it happens that it does not meet the conditions,
   # how many times will there be maximum attempts?
-  max-tries: 8
+  max-tries: 16
   # Calculation Settings
   calculating:
     # After each attempt, the desired chunk is loaded - is it loaded synchronously?
@@ -55,6 +60,8 @@ settings:
 profiles:
 
   - name: 'random'
+    # Minimal radius, default 0
+    minimal-radius: '20'
     # Random radius
     # If radius, when plugin calculate random number for X and Z in -1000 and 1000
     radius: '1000'
@@ -76,6 +83,7 @@ profiles:
     animation: "fall:2,60"
 
   - name: 'player'
+    minimal-radius: '20'
     radius: '100'
     world: 'world'
     target: 'player'

@@ -16,7 +16,7 @@ public class FallAnimation implements IProfileAnimation {
 
     @Override
     public void process(Player player, Location to) {
-        player.teleport(to.add(0, height, 0));
+        player.teleport(to.toBlockLocation().add(0, height, 0));
         player.setNoDamageTicks(preventDamageTicks);
     }
 }

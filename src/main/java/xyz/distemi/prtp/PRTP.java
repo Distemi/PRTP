@@ -10,6 +10,8 @@ import xyz.distemi.prtp.data.Profile;
 import xyz.distemi.prtp.data.Settings;
 import xyz.distemi.prtp.data.antimations.EmptyAnimation;
 import xyz.distemi.prtp.data.antimations.FallAnimation;
+import xyz.distemi.prtp.data.calculator.RTPCoreYCalculator;
+import xyz.distemi.prtp.data.calculator.RTPPluginYCalculator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,19 +20,29 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class PRTP extends JavaPlugin {
+    private static final boolean isPaper;
     public static HashMap<String, Profile> profiles = new HashMap<>();
-
     public static Logger logger;
-
     public static PRTP THIS;
+
+    static {
+        boolean isAPaperServer = false;
+        try {
+            Class.forName("com.destroystokyo.paper.ParticleBuilder");
+            isAPaperServer = true;
+        } catch (ClassNotFoundException ignored) {
+        }
+        isPaper = isAPaperServer;
+    }
 
     public void parseConfig() {
         FileConfiguration cfg = getConfig();
+        System.out.println(cfg);
 
         ConfigurationSection mess_section = cfg.getConfigurationSection("messages");
 
         Messages.noPerm = PUtils.b(mess_section.getString("noPerm", "&fSorry, you're don't has permission for this action&8(&7$Perm&8)."));
-        Messages.teleported = PUtils.b(mess_section.getString("teleported", "&fYoy are teleported to X: #X Y: #Y Z: #Z."));
+        Messages.teleported = PUtils.b(mess_section.getString("teleported", "&fYoy are teleported to X: #X Y: #Y Z: #Z. Using #Tms."));
         Messages.worldNoPlayers = PUtils.b(mess_section.getString("worldNoPlayers", "&fSorry, teleportation don't can be executed when player's not found."));
         Messages.noProfile = PUtils.b(mess_section.getString("noProfile", "&cTeleportation profile not found!"));
         Messages.failedToFindAPlace = PUtils.b(mess_section.getString("failedToFindAPlace", "&cCouldn't find a suitable location, try again..."));
@@ -47,7 +59,8 @@ public final class PRTP extends JavaPlugin {
         Settings.preventBlocks = sett_section.getStringList("prevent-blocks").stream().map(String::toUpperCase).collect(Collectors.toList());
         Settings.maxTries = sett_section.getInt("max-tries", 8);
 
-        Settings.calculateSync = sett_section.getBoolean("calculating.sync-preload");
+        Settings.calculateSync = sett_section.getBoolean("calculating.sync-preload") || isPaper;
+        Settings.yCalculator = sett_section.getString("y-calculator", "core").equalsIgnoreCase("core") ? new RTPCoreYCalculator() : new RTPPluginYCalculator();
 
         profiles.clear();
         for (Map<?, ?> val : cfg.getMapList("profiles")) {
@@ -61,6 +74,7 @@ public final class PRTP extends JavaPlugin {
                     }
                     Profile profile = new Profile();
                     profile.name = (String) val.get("name");
+                    profile.minimalRadius = Integer.parseInt((String) val.get("minimal-radius"));
                     profile.radius = Integer.parseInt((String) val.get("radius"));
                     profile.world = (String) val.get("world");
                     profile.target = (String) val.get("target");
@@ -118,6 +132,6 @@ public final class PRTP extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        profiles.clear();
     }
 }

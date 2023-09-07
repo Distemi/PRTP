@@ -11,6 +11,6 @@ public class EmptyAnimation implements IProfileAnimation {
 
     @Override
     public void process(Player player, Location to) {
-        player.teleport(to);
+        player.teleport(to.toBlockLocation());
     }
 }

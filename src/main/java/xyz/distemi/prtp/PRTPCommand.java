@@ -41,11 +41,9 @@ public class PRTPCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
-            try {
-                PRTPAPI.rtpPlayer(((Player) sender), execute);
-            } catch (Exception exception) {
-                sender.sendMessage(exception.getMessage());
-            }
+
+            PRTPAPI.rtpPlayer(((Player) sender), execute, error -> sender.sendMessage(error.getMessage()));
+
         });
         return true;
     }

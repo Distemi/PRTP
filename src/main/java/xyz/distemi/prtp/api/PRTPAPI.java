@@ -13,13 +13,15 @@ import xyz.distemi.prtp.data.Settings;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class PRTPAPI {
-    public static void rtpPlayer(Player player, String execute) throws Exception {
+    public static void rtpPlayer(Player player, String execute, Consumer<Exception> errorHandler) {
         if (!PRTP.profiles.containsKey(execute)) {
-            throw new Exception(Messages.noProfile);
+            errorHandler.accept(new Exception(Messages.noProfile));
+            return;
         }
 
         if (execute.startsWith("player:")) {
@@ -45,56 +47,93 @@ public class PRTPAPI {
         }
 
         if (!player.hasPermission("prtp.profile." + profile.name)) {
-            throw new Exception(PUtils.a(Messages.noPerm, player));
+            errorHandler.accept(new Exception(PUtils.a(Messages.noPerm, player)));
+            return;
         }
 
         boolean center = profile.target.equalsIgnoreCase("center");
 
-        int iter = 0;
+        long start = System.currentTimeMillis();
+        tryTeleports(0, Settings.maxTries, profile, player, center, errorHandler, start);
+    }
 
-        while (iter < Settings.maxTries) {
-            int x;
-            int z;
-            World world;
+    private static void tryTeleports(int current, int max, Profile profile, Player player, boolean center, Consumer<Exception> errorHandler, long startTime) {
+        if (current >= max) {
+            errorHandler.accept(new Exception(Messages.failedToFindAPlace));
+            return;
+        }
+        int x;
+        int z;
+        World world;
 
-            if (center) {
+        if (center) {
+            x = PUtils.r(-1 * profile.radius, profile.radius);
+            z = PUtils.r(-1 * profile.radius, profile.radius);
+
+            double distance = Math.sqrt(x * x + z * z);
+            while (distance < profile.minimalRadius) {
                 x = PUtils.r(-1 * profile.radius, profile.radius);
                 z = PUtils.r(-1 * profile.radius, profile.radius);
-                world = Bukkit.getWorld(profile.world);
-            } else {
-                List<Player> players = Bukkit.getOnlinePlayers().stream()
-                        .filter(p -> p.getWorld().getName().equalsIgnoreCase(profile.world) && !p.getName().equals(player.getName()))
-                        .collect(Collectors.toList());
-                if (players.size() <= 0) {
-                    throw new Exception(Messages.worldNoPlayers);
-                }
-                Player target = players.get(new Random().nextInt(players.size()));
-                Location location = target.getLocation();
-                x = (int) (location.getX() + PUtils.r(-1 * profile.radius, profile.radius));
-                z = (int) (location.getZ() + PUtils.r(-1 * profile.radius, profile.radius));
-                world = location.getWorld();
+                distance = Math.sqrt(x * x + z * z);
             }
 
-            int y = PUtils.calcY(world, x, z);
-            if (y != -1) {
-                if (RoseCost.doCost(profile.cost, player, true, false)) {
-                    player.sendMessage(PUtils.a(
-                            Messages.teleported
-                                    .replaceAll("#X", String.valueOf(x))
-                                    .replaceAll("#Y", String.valueOf(y))
-                                    .replaceAll("#Z", String.valueOf(z))
-                            , player));
-                    Bukkit.getScheduler().runTask(PRTP.THIS, () -> profile.animation.process(player, new Location(
-                            world,
-                            x,
-                            y,
-                            z
-                    )));
-                    return;
-                }
+            world = Bukkit.getWorld(profile.world);
+        } else {
+            List<Player> players = Bukkit.getOnlinePlayers().stream()
+                    .filter(p -> p.getWorld().getName().equalsIgnoreCase(profile.world) && !p.getName().equals(player.getName()))
+                    .collect(Collectors.toList());
+            if (players.isEmpty()) {
+                errorHandler.accept(new Exception(Messages.worldNoPlayers));
+                return;
             }
-            iter++;
+            Player target = players.get(ThreadLocalRandom.current().nextInt(players.size()));
+            Location location = target.getLocation();
+
+            x = location.getBlockX() + PUtils.r(-1 * profile.radius, profile.radius);
+            z = location.getBlockZ() + PUtils.r(-1 * profile.radius, profile.radius);
+
+            double distance = Math.sqrt(x * x + z * z);
+            while (distance < profile.minimalRadius) {
+                x = (int) (location.getX() + PUtils.r(-1 * profile.radius, profile.radius));
+                z = (int) (location.getZ() + PUtils.r(-1 * profile.radius, profile.radius));
+                distance = Math.sqrt(x * x + z * z);
+            }
+
+
+            world = location.getWorld();
         }
+
+        final boolean[] completed = {false};
+
+        final int finalX = x;
+        final int finalZ = z;
+
+        PUtils.calcY(world, x, z, y -> {
+            if (completed[0]) {
+                return;
+            }
+            completed[0] = true;
+            if (y == -99999) {
+                tryTeleports(current + 1, max, profile, player, center, errorHandler, startTime);
+                return;
+            }
+            if (RoseCost.doCost(profile.cost, player, true, false)) {
+                long endTime = System.currentTimeMillis();
+                player.sendMessage(PUtils.a(
+                        Messages.teleported
+                                .replaceAll("#X", String.valueOf(finalX))
+                                .replaceAll("#Y", String.valueOf(y))
+                                .replaceAll("#Z", String.valueOf(finalZ))
+                                .replaceAll("#T", String.valueOf(endTime - startTime))
+                        , player));
+                Bukkit.getScheduler().runTask(PRTP.THIS, () -> profile.animation.process(player, new Location(
+                        world,
+                        finalX,
+                        y,
+                        finalZ
+                )));
+            }
+        });
     }
 
     public static Collection<Profile> getAllProfiles() {

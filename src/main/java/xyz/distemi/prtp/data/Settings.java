@@ -1,5 +1,8 @@
 package xyz.distemi.prtp.data;
 
+import org.jetbrains.annotations.Nullable;
+import xyz.distemi.prtp.data.calculator.IRTPYCalculator;
+
 import java.util.List;
 
 public class Settings {
@@ -8,5 +11,7 @@ public class Settings {
     public static List<String> preventBlocks;
 
     public static int maxTries;
-    public static boolean calculateSync;
+    public static boolean calculateSync = false;
+    @Nullable
+    public static IRTPYCalculator yCalculator;
 }
