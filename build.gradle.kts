@@ -42,7 +42,7 @@ tasks.processResources {
 }
 
 group = "xyz.distemi.prtp"
-version = "1.4"
+version = "1.4.1"
 description = "PRTP"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 

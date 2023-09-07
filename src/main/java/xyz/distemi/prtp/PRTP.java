@@ -37,7 +37,6 @@ public final class PRTP extends JavaPlugin {
 
     public void parseConfig() {
         FileConfiguration cfg = getConfig();
-        System.out.println(cfg);
 
         ConfigurationSection mess_section = cfg.getConfigurationSection("messages");
 
@@ -59,7 +58,7 @@ public final class PRTP extends JavaPlugin {
         Settings.preventBlocks = sett_section.getStringList("prevent-blocks").stream().map(String::toUpperCase).collect(Collectors.toList());
         Settings.maxTries = sett_section.getInt("max-tries", 8);
 
-        Settings.calculateSync = sett_section.getBoolean("calculating.sync-preload") || isPaper;
+        Settings.calculateSync = sett_section.getBoolean("calculating.sync-preload") || !isPaper;
         Settings.yCalculator = sett_section.getString("y-calculator", "core").equalsIgnoreCase("core") ? new RTPCoreYCalculator() : new RTPPluginYCalculator();
 
         profiles.clear();

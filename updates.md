@@ -1,4 +1,10 @@
-## Improvements, performance and fixes
+
+## 1.4.1 - Hotfixes
+
+Fixed:
+- Paper support and sync preloading option
+
+## 1.4 - Improvements, performance and fixes
 
 ATTENTION: The configuration has been changed!
 
@@ -11,7 +17,7 @@ Fixes:
 - The falling animation now works correctly, teleports in center of block
 - The empty animation now works correctly, as does the drop animation
 
-## Animations, Fixes and another!
+## 1.3 - Animations, Fixes and another!
 
 ATTENTION: The configuration has been changed!
 Changes:
@@ -23,7 +29,7 @@ Changes:
 
 And other minor changes)
 
-## API added and fix
+## 1.2 - API added and fix
 
 API added:
 `xyz.distemi.prtp.api.PRTPAPI` 2 methods:
@@ -32,7 +38,7 @@ API added:
 
 Fixed teleport to void - if teleport location is void(don't have any place) then plugin search next location for teleport. For end world i recommend increase number of tries.
 
-## Perfomance Improved, fixes and more...
+## 1.1 - Perfomance Improved, fixes and more... 
 
 Changes in version 1.1:
 - Changes teleport sync to asynchronous (mega performance improvement).

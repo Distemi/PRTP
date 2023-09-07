@@ -48,9 +48,9 @@ public class RTPPluginYCalculator implements IRTPYCalculator {
 
 
         if (Settings.calculateSync) {
-            calcChunkyAsync(world, chunkX, chunkZ, calculator);
-        } else {
             calcChunkySync(world, chunkX, chunkZ, calculator);
+        } else {
+            calcChunkyAsync(world, chunkX, chunkZ, calculator);
         }
     }
 }

@@ -29,7 +29,7 @@ public class RoseCost {
             return true;
         }
 
-        if ((player.getGameMode().equals(GameMode.SURVIVAL) || player.getGameMode().equals(GameMode.ADVENTURE))) {
+        if (player.getGameMode().equals(GameMode.SURVIVAL) || player.getGameMode().equals(GameMode.ADVENTURE)) {
             if (cost.startsWith("food:")) {
                 int food = Integer.parseUnsignedInt(cost.split(":")[1]);
                 if (player.getFoodLevel() <= food) {
@@ -51,7 +51,8 @@ public class RoseCost {
                     return false;
                 }
                 if (take) {
-                    player.damage(health);
+                    player.setHealth(player.getHealth() - health);
+                    player.damage(0);
                 }
                 return true;
             }

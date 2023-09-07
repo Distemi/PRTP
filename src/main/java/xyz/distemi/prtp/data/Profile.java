@@ -10,8 +10,6 @@ public class Profile {
     public String target;
     public String cost;
     public IProfileAnimation animation;
-
-
     @Override
     public String toString() {
         return "Profile{" +

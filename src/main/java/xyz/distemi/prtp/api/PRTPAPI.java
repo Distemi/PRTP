@@ -41,10 +41,10 @@ public class PRTPAPI {
         }
 
         Profile profile = PRTP.profiles.get(execute);
-
         if (!RoseCost.doCost(profile.cost, player, false, true)) {
             return;
         }
+
 
         if (!player.hasPermission("prtp.profile." + profile.name)) {
             errorHandler.accept(new Exception(PUtils.a(Messages.noPerm, player)));
