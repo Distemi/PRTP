@@ -20,20 +20,11 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class PRTP extends JavaPlugin {
-    private static final boolean isPaper;
     public static HashMap<String, Profile> profiles = new HashMap<>();
     public static Logger logger;
     public static PRTP THIS;
 
-    static {
-        boolean isAPaperServer = false;
-        try {
-            Class.forName("com.destroystokyo.paper.ParticleBuilder");
-            isAPaperServer = true;
-        } catch (ClassNotFoundException ignored) {
-        }
-        isPaper = isAPaperServer;
-    }
+
 
     public void parseConfig() {
         FileConfiguration cfg = getConfig();
@@ -58,7 +49,7 @@ public final class PRTP extends JavaPlugin {
         Settings.preventBlocks = sett_section.getStringList("prevent-blocks").stream().map(String::toUpperCase).collect(Collectors.toList());
         Settings.maxTries = sett_section.getInt("max-tries", 8);
 
-        Settings.calculateSync = sett_section.getBoolean("calculating.sync-preload") || !isPaper;
+        Settings.calculateSync = sett_section.getBoolean("calculating.sync-preload");
         Settings.yCalculator = sett_section.getString("y-calculator", "core").equalsIgnoreCase("core") ? new RTPCoreYCalculator() : new RTPPluginYCalculator();
 
         profiles.clear();
